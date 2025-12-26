@@ -1,26 +1,108 @@
-@import "tailwindcss";
+/* ============================= */
+/* GLOBAL BASE STYLES */
+/* ============================= */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #6dd5ed;
+  --card: #111;
+  --text: #ffffff;
+  --input-bg: #f2f2f2;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* 🔓 ENABLE SCROLL (IMPORTANT FIX) */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* 🌈 App Background */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #2193b0, #6dd5ed);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ============================= */
+/* 🌈 FLOATING OBJECTS BACKGROUND */
+/* ============================= */
+
+.floating-container {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.float {
+  position: absolute;
+  font-size: 3.4rem;
+  opacity: 0.95;
+  animation: floatUp linear infinite;
+  filter: drop-shadow(0 0 14px rgba(255,255,255,0.8));
+}
+
+/* 📘 Education */
+.book { left: 5%; color: #ffeb3b; animation-duration: 22s; }
+.pencil { left: 15%; color: #ff9100; animation-duration: 19s; }
+.ruler { left: 25%; color: #76ff03; animation-duration: 21s; }
+
+/* 🧪 Chemistry */
+.flask { left: 35%; color: #00e5ff; animation-duration: 18s; }
+.testtube { left: 45%; color: #18ffff; animation-duration: 23s; }
+
+/* ⚛️ Physics */
+.atom { left: 55%; color: #ff4081; animation-duration: 20s; }
+.magnet { left: 65%; color: #f44336; animation-duration: 24s; }
+.bulb { left: 75%; color: #fff176; animation-duration: 17s; }
+
+/* 🧬 Biology */
+.dna { left: 85%; color: #7c4dff; animation-duration: 26s; }
+.leaf { left: 95%; color: #00c853; animation-duration: 22s; }
+.microscope { left: 50%; color: #b388ff; animation-duration: 25s; }
+
+/* 🌍 Extras */
+.globe { left: 60%; color: #40c4ff; animation-duration: 28s; }
+.star { left: 70%; color: #ffd740; animation-duration: 16s; }
+
+/* 🎈 Animation */
+@keyframes floatUp {
+  from {
+    transform: translateY(110vh) rotate(0deg);
+  }
+  to {
+    transform: translateY(-140px) rotate(360deg);
   }
 }
+/* ============================= */
+/* ZYNOVA TEXT LOGO */
+/* ============================= */
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.zynova-logo {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #ffeb3b, #ffffff, #00e5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+.zynova-tagline {
+  font-size: 13px;
+  text-align: center;
+  color: #ffffff;
+  opacity: 0.9;
+  margin-top: 4px;
+}
+
+.zynova-icon {
+  font-size: 42px;
+  text-align: center;
+  margin-bottom: 6px;
 }
