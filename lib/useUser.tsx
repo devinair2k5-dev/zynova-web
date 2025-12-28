@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { auth, db } from "./firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { auth } from "./firebase";
 
 export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
@@ -11,20 +10,25 @@ export default function useUser() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (u) => {
-      setUser(u);
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
 
-      if (u) {
-        const snap = await getDoc(doc(db, "users", u.uid));
-        setRole(snap.exists() ? snap.data().role : null);
-      } else {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!firebaseUser) {
+        setUser(null);
         setRole(null);
+        setLoading(false);
+        return;
       }
 
+      setUser(firebaseUser);
+      setRole("student"); // default role
       setLoading(false);
     });
 
-    return () => unsub();
+    return () => unsubscribe();
   }, []);
 
   return { user, role, loading };
