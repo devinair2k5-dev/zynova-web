@@ -9,14 +9,11 @@ const firebaseConfig = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
 };
 
+// ✅ Prevent multiple initialization (Vercel safe)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// 🔴 IMPORTANT: Auth only in browser
-export const auth =
-  typeof window !== "undefined" ? getAuth(app) : null;
-
+export const auth = getAuth(app);
 export const db = getFirestore(app);
-
-export default app;

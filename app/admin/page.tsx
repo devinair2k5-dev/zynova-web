@@ -1,19 +1,37 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useUser from "@/lib/useUser";
 
-export default function AdminPage() {
+export default function AdminDashboard() {
   const { user, role, loading } = useUser();
   const router = useRouter();
 
-  if (typeof window === "undefined") return null;
-  if (loading) return null;
+  useEffect(() => {
+    if (loading) return;
 
-  if (!user || role !== "admin") {
-    router.replace("/login");
-    return null;
+    if (!user) {
+      router.replace("/login");
+    } else if (role !== "admin") {
+      router.replace("/dashboard");
+    }
+  }, [user, role, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
-  return <h1>Admin Dashboard</h1>;
+  return (
+    <div className="min-h-screen p-6">
+      <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+      <p className="mt-2 text-gray-600">
+        Welcome Admin 👑
+      </p>
+    </div>
+  );
 }

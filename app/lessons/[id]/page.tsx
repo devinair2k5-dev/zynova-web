@@ -1,17 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
 import { useParams, useRouter } from "next/navigation";
-import { db } from "@/lib/firebase";
 import useUser from "@/lib/useUser";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+
+type Lesson = {
+  title: string;
+  description: string;
+  content: string;
+};
 
 export default function LessonPage() {
-  const { id } = useParams();
   const router = useRouter();
+  const params = useParams();
+  const id = params?.id as string;
+
   const { user, loading } = useUser();
 
-  const [lesson, setLesson] = useState<any>(null);
+  const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loadingLesson, setLoadingLesson] = useState(true);
 
   // 🔐 Protect route
@@ -23,58 +31,40 @@ export default function LessonPage() {
 
   // 📘 Fetch lesson
   useEffect(() => {
-    const fetchLesson = async () => {
-      const ref = doc(db, "courses", id as string);
-      const snap = await getDoc(ref);
+    if (!id) return;
 
-      if (snap.exists()) {
-        setLesson(snap.data());
+    const fetchLesson = async () => {
+      try {
+        const ref = doc(db, "courses", id);
+        const snap = await getDoc(ref);
+
+        if (snap.exists()) {
+          setLesson(snap.data() as Lesson);
+        }
+      } catch (err) {
+        console.error("Lesson fetch error:", err);
+      } finally {
+        setLoadingLesson(false);
       }
-      setLoadingLesson(false);
     };
 
     fetchLesson();
   }, [id]);
 
-  if (loading || loadingLesson) return null;
+  if (loading || loadingLesson) {
+    return <div style={{ padding: 40 }}>Loading lesson…</div>;
+  }
 
   if (!lesson) {
-    return (
-      <div style={box}>
-        <h2>Lesson not found</h2>
-      </div>
-    );
+    return <div style={{ padding: 40 }}>Lesson not found ❌</div>;
   }
 
   return (
-    <div style={box}>
-      <h2>{lesson.title}</h2>
+    <div style={{ padding: 40, maxWidth: 800, margin: "auto" }}>
+      <h1>{lesson.title}</h1>
       <p>{lesson.description}</p>
-
-      <p style={{ marginTop: 20 }}>
-        <strong>Type:</strong> {lesson.type}
-      </p>
-
-      <button style={btn} onClick={() => router.back()}>
-        ← Back to Dashboard
-      </button>
+      <hr />
+      <div>{lesson.content}</div>
     </div>
   );
 }
-
-/* 🎨 Styles */
-
-const box = {
-  width: 500,
-  margin: "80px auto",
-  background: "#111",
-  color: "white",
-  padding: 20,
-  borderRadius: 8,
-};
-
-const btn = {
-  marginTop: 20,
-  padding: 10,
-  cursor: "pointer",
-};
