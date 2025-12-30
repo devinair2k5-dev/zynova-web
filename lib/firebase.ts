@@ -1,3 +1,4 @@
+// lib/firebase.ts
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -12,8 +13,13 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
 };
 
-// ✅ Prevent multiple initialization (Vercel safe)
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+// 🚨 IMPORTANT: block server-side execution
+const app =
+  typeof window !== "undefined"
+    ? !getApps().length
+      ? initializeApp(firebaseConfig)
+      : getApp()
+    : null;
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const auth = app ? getAuth(app) : null;
+export const db = app ? getFirestore(app) : null;

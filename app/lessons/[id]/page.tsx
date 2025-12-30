@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import useUser from "@/lib/useUser";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 
 type Lesson = {
   title: string;
@@ -29,13 +27,19 @@ export default function LessonPage() {
     }
   }, [user, loading, router]);
 
-  // 📘 Fetch lesson
+  // 📘 Fetch lesson (CLIENT ONLY)
   useEffect(() => {
     if (!id) return;
 
     const fetchLesson = async () => {
       try {
-        const ref = doc(db, "courses", id);
+        // ⛔ Import firebase ONLY on client
+        const { doc, getDoc } = await import("firebase/firestore");
+        const { db } = await import("@/lib/firebase");
+
+        if (!db) return;
+
+        const ref = doc(db, "lessons", id);
         const snap = await getDoc(ref);
 
         if (snap.exists()) {
@@ -52,19 +56,20 @@ export default function LessonPage() {
   }, [id]);
 
   if (loading || loadingLesson) {
-    return <div style={{ padding: 40 }}>Loading lesson…</div>;
+    return <div className="p-6 text-white">Loading lesson...</div>;
   }
 
   if (!lesson) {
-    return <div style={{ padding: 40 }}>Lesson not found ❌</div>;
+    return <div className="p-6 text-white">Lesson not found</div>;
   }
 
   return (
-    <div style={{ padding: 40, maxWidth: 800, margin: "auto" }}>
-      <h1>{lesson.title}</h1>
-      <p>{lesson.description}</p>
-      <hr />
-      <div>{lesson.content}</div>
+    <div className="min-h-screen p-6 text-white">
+      <h1 className="text-3xl font-bold mb-2">{lesson.title}</h1>
+      <p className="text-gray-300 mb-4">{lesson.description}</p>
+      <div className="bg-white/10 p-4 rounded-lg">
+        {lesson.content}
+      </div>
     </div>
   );
 }
