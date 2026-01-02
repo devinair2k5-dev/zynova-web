@@ -1,7 +1,8 @@
-// lib/firebase.ts
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+'use client';
+
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -13,13 +14,7 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
 };
 
-// 🚨 IMPORTANT: block server-side execution
-const app =
-  typeof window !== "undefined"
-    ? !getApps().length
-      ? initializeApp(firebaseConfig)
-      : getApp()
-    : null;
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-export const auth = app ? getAuth(app) : null;
-export const db = app ? getFirestore(app) : null;
+export const auth = getAuth(app);
+export const db = getFirestore(app);
