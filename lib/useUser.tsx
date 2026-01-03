@@ -1,35 +1,21 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "./firebase";
+import { useEffect, useState } from 'react';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from './firebase';
 
-export default function useUser() {
+export function useUser() {
   const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
-
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (!firebaseUser) {
-        setUser(null);
-        setRole(null);
-        setLoading(false);
-        return;
-      }
-
-      setUser(firebaseUser);
-      setRole("student"); // default role
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUser(u);
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => unsub();
   }, []);
 
-  return { user, role, loading };
+  return { user, loading };
 }

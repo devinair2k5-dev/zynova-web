@@ -1,20 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ============================= */
 /* GLOBAL BASE STYLES */
 /* ============================= */
 
 :root {
   --bg: #6dd5ed;
-  --card: #111;
+  --card: rgba(0, 0, 0, 0.35);
   --text: #ffffff;
-  --input-bg: #f2f2f2;
+  --input-bg: #ffffff;
 }
 
-/* 🔓 ENABLE SCROLL (IMPORTANT FIX) */
+/* 🔓 ENABLE SCROLL */
 html,
 body {
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -24,6 +29,58 @@ body {
   background: linear-gradient(135deg, #2193b0, #6dd5ed);
   color: var(--text);
   min-height: 100vh;
+  position: relative;
+}
+
+/* ============================= */
+/* ✅ PAGE CENTER (IMPORTANT FIX) */
+/* ============================= */
+
+.page-center {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================= */
+/* ✅ CARD (LOGIN / FORMS) */
+/* ============================= */
+
+.card {
+  background: var(--card);
+  width: 100%;
+  max-width: 380px;
+  padding: 28px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  backdrop-filter: blur(10px);
+  z-index: 2;
+}
+
+/* ============================= */
+/* INPUTS & BUTTONS */
+/* ============================= */
+
+input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: var(--input-bg);
+}
+
+button {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 /* ============================= */
@@ -78,6 +135,7 @@ body {
     transform: translateY(-140px) rotate(360deg);
   }
 }
+
 /* ============================= */
 /* ZYNOVA TEXT LOGO */
 /* ============================= */
@@ -105,4 +163,55 @@ body {
   font-size: 42px;
   text-align: center;
   margin-bottom: 6px;
+}
+/* ============================= */
+/* 🔧 INPUT VISIBILITY FIX */
+/* ============================= */
+
+input,
+select,
+textarea {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Placeholder text */
+input::placeholder {
+  color: #666666 !important;
+  opacity: 1;
+}
+
+/* Buttons visibility */
+button {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Create account text / links */
+a,
+.create-account,
+.signup-text {
+  color: #ffffff !important;
+  font-weight: 500;
+  cursor: pointer;
+}
+/* ============================= */
+/* 🧾 CREATE STUDENT ACCOUNT FIX */
+/* ============================= */
+
+.create-account {
+  margin-top: 12px;
+  text-align: center;
+  color: #2563eb !important; /* blue */
+  font-weight: 600;
+  cursor: pointer;
+  display: block;
+}
+
+.create-account:hover {
+  text-decoration: underline;
 }

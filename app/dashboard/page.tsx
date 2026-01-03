@@ -1,37 +1,59 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { signOut } from "firebase/auth";
-import { useRouter } from "next/navigation";
-import useUser from "@/lib/useUser";
-import { auth } from "@/lib/firebase";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, loading } = useUser();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // 🚫 Stop Next.js from touching this during build
-  if (typeof window === "undefined") return null;
-  if (loading) return null;
-  if (!user) {
-    router.replace("/login");
-    return null;
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
+        router.push('/login');
+      } else {
+        setUser(currentUser);
+        setLoading(false);
+      }
+    });
+
+    return () => unsub();
+  }, [router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-blue-100 text-gray-800">
+        Loading...
+      </div>
+    );
   }
 
-  const handleLogout = async () => {
-    if (!auth) return;
-    await signOut(auth);
-    router.replace("/login");
-  };
-
   return (
-    <div style={{ padding: 40 }}>
-      <h1>Student Dashboard</h1>
-      <p>Welcome, {user.email}</p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-400 to-blue-600">
+      <div className="bg-white p-6 rounded-2xl shadow-xl w-[340px] text-gray-800">
+        
+        <h1 className="text-xl font-bold text-blue-700 mb-2 text-center">
+          Student Dashboard
+        </h1>
 
-      <button onClick={handleLogout} style={{ marginTop: 20 }}>
-        Logout
-      </button>
+        <p className="text-sm text-gray-700 mb-4 text-center">
+          Welcome, <span className="font-semibold">{user?.email}</span>
+        </p>
+
+        <button
+          onClick={async () => {
+            await signOut(auth);
+            router.push('/login');
+          }}
+          className="w-full rounded bg-red-500 py-2 font-semibold text-white hover:bg-red-600 transition"
+        >
+          Logout
+        </button>
+
+      </div>
     </div>
   );
 }
