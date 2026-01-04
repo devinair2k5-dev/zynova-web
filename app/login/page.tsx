@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   signInWithEmailAndPassword,
@@ -9,26 +9,17 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import useUser from '@/lib/useUser';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user, loading } = useUser();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  // 🔁 Redirect when login is confirmed
-  useEffect(() => {
-    if (!loading && user) {
-      router.replace('/dashboard');
-    }
-  }, [user, loading, router]);
-
   const login = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      router.replace('/dashboard');
     } catch (e: any) {
       setError(e.message);
     }
@@ -37,6 +28,7 @@ export default function LoginPage() {
   const signup = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
+      router.replace('/dashboard');
     } catch (e: any) {
       setError(e.message);
     }
@@ -46,20 +38,21 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
+      router.replace('/dashboard');
     } catch (e: any) {
       setError(e.message);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-400 to-blue-600">
+    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-cyan-400 to-blue-600">
       <div className="w-[360px] rounded-2xl bg-white p-6 shadow-xl flex flex-col gap-3">
         <h1 className="text-center text-2xl font-bold text-blue-600">
           Zynova
         </h1>
 
         <input
-          className="w-full rounded border px-3 py-2 text-black"
+          className="w-full rounded border px-3 py-2"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -67,7 +60,7 @@ export default function LoginPage() {
 
         <input
           type="password"
-          className="w-full rounded border px-3 py-2 text-black"
+          className="w-full rounded border px-3 py-2"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -86,7 +79,7 @@ export default function LoginPage() {
 
         <button
           onClick={signup}
-          className="w-full rounded bg-gray-200 py-2 font-semibold text-black"
+          className="w-full rounded bg-gray-200 py-2 font-semibold"
         >
           Create Student Account
         </button>
