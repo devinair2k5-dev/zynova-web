@@ -8,54 +8,32 @@ import { auth } from '@/lib/firebase';
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (currentUser) => {
-      if (!currentUser) {
-        setLoading(false);
-        router.replace('/login'); // ✅ important
-      } else {
-        setUser(currentUser);
-        setLoading(false);
-      }
+    const unsub = onAuthStateChanged(auth, (u) => {
+      if (!u) router.replace('/login');
+      else setUser(u);
     });
 
     return () => unsub();
   }, [router]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-blue-100 text-gray-800">
-        Loading...
-      </div>
-    );
-  }
-
-  if (!user) return null; // ✅ prevents flash on Vercel
+  if (!user) return null;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-400 to-blue-600">
-      <div className="bg-white p-6 rounded-2xl shadow-xl w-[340px] text-gray-800">
-        
-        <h1 className="text-xl font-bold text-blue-700 mb-2 text-center">
-          Student Dashboard
-        </h1>
-
-        <p className="text-sm text-gray-700 mb-4 text-center">
-          Welcome, <span className="font-semibold">{user.email}</span>
-        </p>
-
+      <div className="bg-white p-6 rounded-xl text-center">
+        <h1 className="font-bold text-lg mb-2">Student Dashboard</h1>
+        <p className="mb-4">{user.email}</p>
         <button
           onClick={async () => {
             await signOut(auth);
-            router.replace('/login'); // ✅ important
+            router.replace('/login');
           }}
-          className="w-full rounded bg-red-500 py-2 font-semibold text-white hover:bg-red-600 transition"
+          className="bg-red-500 text-white px-4 py-2 rounded"
         >
           Logout
         </button>
-
       </div>
     </div>
   );
