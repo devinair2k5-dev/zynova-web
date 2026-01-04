@@ -13,7 +13,8 @@ export default function DashboardPage() {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
-        router.push('/login');
+        setLoading(false);
+        router.replace('/login'); // ✅ important
       } else {
         setUser(currentUser);
         setLoading(false);
@@ -31,6 +32,8 @@ export default function DashboardPage() {
     );
   }
 
+  if (!user) return null; // ✅ prevents flash on Vercel
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-400 to-blue-600">
       <div className="bg-white p-6 rounded-2xl shadow-xl w-[340px] text-gray-800">
@@ -40,13 +43,13 @@ export default function DashboardPage() {
         </h1>
 
         <p className="text-sm text-gray-700 mb-4 text-center">
-          Welcome, <span className="font-semibold">{user?.email}</span>
+          Welcome, <span className="font-semibold">{user.email}</span>
         </p>
 
         <button
           onClick={async () => {
             await signOut(auth);
-            router.push('/login');
+            router.replace('/login'); // ✅ important
           }}
           className="w-full rounded bg-red-500 py-2 font-semibold text-white hover:bg-red-600 transition"
         >
